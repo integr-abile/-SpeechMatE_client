@@ -53,7 +53,18 @@ $( document ).ready(function() {
     recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
+    // recognition.maxAlternatives = 2;
 
+    $.get('../res/math_grammar.txt',function(data){ //carico il mio file di grammatica
+      
+      var speechRecognitionList = new webkitSpeechGrammarList();
+      speechRecognitionList.addFromString(data, 1);
+      recognition.grammars = speechRecognitionList;
+    })
+    // var speechRecognitionList = new webkitSpeechGrammarList();
+    // speechRecognitionList.addFromString(grammar, 1);
+    // recognition.grammars = speechRecognitionList;
+    
     recognition.onstart = function() {
       recognizing = true;
       showInfo('speak_now');
@@ -106,13 +117,10 @@ $( document ).ready(function() {
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           console.log("final");
-          final_transcript += event.results[i][0].transcript;
-          
-          var xhttp = new XMLHttpRequest();
-          var addr = "http://"+env.HOST_IP+":5000/text";
-          xhttp.open("POST",addr,true);
-          xhttp.setRequestHeader("Content-Type","application/json;charset=UTF-8");
-          xhttp.send(JSON.stringify({"text":final_transcript}));
+  
+          final_transcript += spellingCorrection(event.results[i][0].transcript.toLowerCase()); //0 indica l'alternativa più probabile. Decreasing confidence order
+          // debugger
+          postMathText(final_transcript);
         
           final_transcript = '';
           final_span.innerHTML = '';
@@ -122,7 +130,7 @@ $( document ).ready(function() {
           interim_transcript += event.results[i][0].transcript;
         }
       }
-      final_transcript = capitalize(final_transcript);
+      // final_transcript = capitalize(final_transcript);
       final_span.innerHTML = linebreak(final_transcript);
       interim_span.innerHTML = linebreak(interim_transcript);
     };
@@ -153,36 +161,7 @@ function linebreak(s) {
   return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
 }
 
-var first_char = /\S/;
-function capitalize(s) {
-  return s.replace(first_char, function(m) { return m.toUpperCase(); });
-}
-
-$("#copy_button").click(function () {
-  if (recognizing) {
-    recognizing = false;
-    recognition.stop();
-  }
-  setTimeout(copyToClipboard, 500);
-  
-});
-
-function copyToClipboard() {
-  if (document.selection) { 
-      var range = document.body.createTextRange();
-      range.moveToElementText(document.getElementById('results'));
-      range.select().createTextRange();
-      document.execCommand("copy"); 
-  
-  } else if (window.getSelection) {
-      var range = document.createRange();
-       range.selectNode(document.getElementById('results'));
-       window.getSelection().addRange(range);
-       document.execCommand("copy");
-  }
-  showInfo('copy');
-}
-
+//abilito l'inizio della dettatura
 $("#start_button").click(function () {
   if (recognizing) {
     recognition.stop();
@@ -214,4 +193,24 @@ function showInfo(s) {
     $("#info").removeClass();
     $("#info").addClass('d-none');
   }
+}
+
+//WS
+function postMathText(txt){
+  var xhttp = new XMLHttpRequest();
+  var addr = "http://"+env.HOST_IP+":5000/mathtext";
+  xhttp.open("POST",addr,true);
+  xhttp.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+  xhttp.send(JSON.stringify({"text":txt}));
+}
+
+function spellingCorrection(text){
+  if(text!==""){
+    var split = text.split(" ");
+    for(var i=0;i<split.length;i++)
+      if(split[i] !== "" && problematic_letters[split[i]] !== undefined)
+        split[i] = problematic_letters[split[i]];
+    return split.join(' ');
+  }
+  return "";
 }

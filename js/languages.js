@@ -61,3 +61,19 @@ var langs =
                      ['yue-Hant-HK', '粵語 (香港)']],
  ['日本語',           ['ja-JP']],
  ['Lingua latīna',   ['la']]];
+
+ //errori fonetici comuni che le web speech API commettono su singole lettere o incorporando in singole parole più parole (biword per esempio)
+ //phoneme2grapheme shallow mapping
+ var problematic_letters = {
+     "bi":"b",
+     "ci":"c",
+     "di":"d",
+     "gi":"g",
+     "pi":"p",
+     "ti":"t",
+     "vi":"v",
+     "ics":"x",
+     "ha":"a",
+     "the":"de", //per integrali
+     "dx":" di x" //per esempio: per f(x), cos(x)
+ };
