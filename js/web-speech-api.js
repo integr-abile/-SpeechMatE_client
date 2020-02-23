@@ -56,7 +56,7 @@ $( document ).ready(function() {
     // recognition.maxAlternatives = 2;
 
     $.get('../res/math_grammar.txt',function(data){ //carico il mio file di grammatica
-      
+      debugger
       var speechRecognitionList = new webkitSpeechGrammarList();
       speechRecognitionList.addFromString(data, 1);
       recognition.grammars = speechRecognitionList;
@@ -129,7 +129,7 @@ $( document ).ready(function() {
           console.log("interim");
           interim_transcript += event.results[i][0].transcript;
         }
-      }
+      }                                   
       // final_transcript = capitalize(final_transcript);
       final_span.innerHTML = linebreak(final_transcript);
       interim_span.innerHTML = linebreak(interim_transcript);

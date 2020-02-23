@@ -77,3 +77,38 @@ var langs =
      "the":"de", //per integrali
      "dx":" di x" //per esempio: per f(x), cos(x)
  };
+
+// var grammar = '#JSGF V1.0 UTF-8 it; grammar my-math;'
+// grammar += "<roman_letter> = a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z ;";
+// grammar += "<greek_letter> = alfa | beta | gamma | delta | epsilon | zeta | eta | teta | iota | cappa | lambda | mu | nu | xi | omicron | pi | ro | sigma | tau | upsilon | fi | chi | psi | omega ;";
+// grammar += "<capital-roman> = <roman_letter> maiuscolo;";
+// grammar += "<capital-greek> = <greek_letter> maiuscolo;";
+// grammar += "<multiple-roman-letters> = <roman_letter>+ | <capital-roman>+;";
+// grammar += "<multiple-greek-letters> = <greek_letter>+ | <capital-greek>+;";
+// grammar += "<generic-letter> = <roman_letter> | <capital-roman> | <greek_letter> | <capital-greek>;";
+// grammar += "<multiple-generic-letter> = <multiple-roman-letters> | <multiple-greek-letters>;";
+// grammar += "<più> = più;";
+// grammar += "<meno> = meno;";
+// grammar += "<per> = per | moltiplicato per;";
+// grammar += "<diviso> = diviso;";
+// grammar += "<uguale> = uguale;";
+// grammar += "<diverso> = diverso;";
+// grammar += "<minore> = minore di;";
+// grammar += "<maggiore> = maggiore di;";
+// grammar += "<minore-uguale> = minore [o] uguale ([a] | [di]);";
+// grammar += "<maggiore-uguale> = maggiore [o] uguale ([a] | [di]);";
+// grammar += "<segno> = <più> | <meno> | <per> | <diviso> | <uguale> | <diverso> | <maggiore> | <minore> | <minore-uguale> | <maggiore-uguale>;";
+// grammar += "<parentesi-tonda-aperta> = aperta tonda | aperta parentesi tonda;";
+// grammar += "<parentesi-tonda-chiusa> = chiusa tonda | chiusa parentesi tonda;";
+// grammar += "<parentesi-quadra-aperta> = aperta quadra | aperta parentesi quadra;";
+// grammar += "<parentesi-quadra-chiusa> = chiusa quadra | chiusa parentesi quadra;";
+// grammar += "<parentesi-graffa-aperta> = aperta graffa | aperta parentesi graffa;";
+// grammar += "<parentesi-graffa-chiusa> = chiusa graffa | chiusa parentesi graffa;";
+// grammar += "<più-meno> = più o meno;";
+// grammar += "<funzione-di> = funzione di;";
+// grammar += "<pedice> = <generic-letter> pedice;";
+// grammar += "<frazione> = frazione;"
+// grammar += "<parti-frazione> = numeratore | denominatore | fratto;";
+// grammar += "<seno> = seno di | sen;";
+// grammar += "<coseno> = coseno di | cos;";
+// grammar += "<tangente> = tangente di;";

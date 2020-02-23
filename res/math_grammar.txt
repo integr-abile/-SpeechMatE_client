@@ -7,20 +7,11 @@ Grammatica pensata per aiutare il riconoscitore di Google a riconoscere i termin
 I numeri sembra che la web speech API li riconosca bene e che quindi non ci sia bisogno in questa grammatica di fare una corrispondenza cifra-pronuncia
 */
 
-//lettere
 <roman_letter> = a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z ;
 <capital-roman> = <roman_letter> maiuscolo;
 <greek_letter> = alfa | beta | gamma | delta | epsilon | zeta | eta | teta | iota | cappa | lambda | mu | nu | xi | omicron | pi | ro | sigma | tau | upsilon | fi | chi | psi | omega ;
 <capital-greek> = <greek_letter> maiuscolo;
-<multiple-roman-letters> = <roman_letter>+ | <capital-roman>+;
-<multiple-greek-letters> = <greek_letter>+ | <capital-greek>+;
 <generic-letter> = <roman_letter> | <capital-roman> | <greek_letter> | <capital-greek>;
-<multiple-generic-letter> = <multiple-roman-letters> | <multiple-greek-letters>;
-
-//numeri
-<numero> = <NULL>;
-
-//simboli
 <più> = più;
 <meno> = meno;
 <per> = per | moltiplicato per;
@@ -29,42 +20,23 @@ I numeri sembra che la web speech API li riconosca bene e che quindi non ci sia 
 <diverso> = diverso;
 <minore> = minore di;
 <maggiore> = maggiore di;
-<minore-uguale> = minore [o] uguale;
-<maggiore-uguale> = maggiore [o] uguale;
-<segno> = <più> | <meno> | <per> | <diviso> | <uguale> | <diverso>;
-
-//parentesi
+<minore-uguale> = minore [o] uguale ([a] | [di]);
+<maggiore-uguale> = maggiore [o] uguale ([a] | [di]);
+<segno> = <più> | <meno> | <per> | <diviso> | <uguale> | <diverso> | <maggiore> | <minore> | <minore-uguale> | <maggiore-uguale>;
 <parentesi-tonda-aperta> = aperta tonda | aperta parentesi tonda;
 <parentesi-tonda-chiusa> = chiusa tonda | chiusa parentesi tonda;
 <parentesi-quadra-aperta> = aperta quadra | aperta parentesi quadra;
 <parentesi-quadra-chiusa> = chiusa quadra | chiusa parentesi quadra;
 <parentesi-graffa-aperta> = aperta graffa | aperta parentesi graffa;
 <parentesi-graffa-chiusa> = chiusa graffa | chiusa parentesi graffa;
-
-//operatori. è necessario fare una variante nel caso di numeri e nel caso di lettere
-<derivata> = <generic-letter> primo | primo;
-<potenza> = <NULL> alla <NULL>;
-<radice-quadrata> = radice quadrata di;
-<radice-cubica> = radice cubica di;
-<integrale-definito> = integrale da <NULL> a <NULL> di;
-<integrale-indefinito> = integrale di;
-<de> = in de <generic-letter>;
-<sommatoria> = sommatoria da <generic-letter> <uguale> [a] <NULL> a <NULL>;
-<valore-assoluto> = valore assoluto di <NULL>;
 <più-meno> = più o meno;
 <funzione-di> = funzione di;
 <pedice> = <generic-letter> pedice;
-
 <frazione> = frazione;
 <parti-frazione> = numeratore | denominatore | fratto;
 <seno> = seno di | sen;
 <coseno> = coseno di | cos;
 <tangente> = tangente di;
-<trigonometria-base> = <seno> | <coseno> | <tangente>;
-<sen-quadro> = seno al quadrato di;
-<cos-quadro> = coseno al quadrato di;
-
-<limite> = limite per <generic-letter> che tende a <NULL>;
 
 
 
