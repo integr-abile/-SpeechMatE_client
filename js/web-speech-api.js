@@ -207,10 +207,53 @@ function postMathText(txt){
 function spellingCorrection(text){
   if(text!==""){
     var split = text.split(" ");
-    for(var i=0;i<split.length;i++)
-      if(split[i] !== "" && problematic_letters[split[i]] !== undefined)
+    var structuredText = checkExceptionsInText(split);
+    
+    for(var i=0;i<structuredText.length;i++){
+      var structuredElem = structuredText[i];
+      if(!structuredElem.protected && structuredElem.token !== "" && problematic_letters[structuredElem.token] !== undefined )
         split[i] = problematic_letters[split[i]];
+    }
     return split.join(' ');
+
+    // for(var i=0;i<split.length;i++)
+    //   if(split[i] !== "" && problematic_letters[split[i]] !== undefined)
+    //     split[i] = problematic_letters[split[i]];
+    // return split.join(' ');
   }
   return "";
+}
+
+///In questo metodo marco i token che possono essere modificati da quelli che non lo possono essere
+function checkExceptionsInText(splittedTextArray){
+
+  //init
+  var structuredArrayText = [];
+  debugger
+  for(var i=0;i<splittedTextArray.length;i++)
+    structuredArrayText.push({protected:false,token:splittedTextArray[i]});
+  
+  for(var i=0;i<exceptions.length;i++){
+    var exception = exceptions[i];
+    var idx = -1;
+    var matched = true;
+
+    for(var j=0;j<exception.length;j++){
+      var token = exception[j];
+      var tokenIdx = splittedTextArray.indexOf(token); 
+      if(tokenIdx !== -1 && (idx === -1 || tokenIdx === idx+1)){ 
+        idx = tokenIdx;
+      } else{
+        matched = false;
+        break;
+      }
+    }
+    if(matched){
+      var startLockIndex = idx - exception.length + 1;
+      var endIndex = idx + 1;
+      for(var i=startLockIndex;i<endIndex;i++)
+        structuredArrayText[i].protected = true;
+    }
+  }
+  return structuredArrayText;
 }

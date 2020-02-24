@@ -67,7 +67,6 @@ var langs =
  var problematic_letters = {
      "bi":"b",
      "ci":"c",
-     "di":"d",
      "gi":"g",
      "pi":"p",
      "ti":"t",
@@ -77,6 +76,8 @@ var langs =
      "the":"de", //per integrali
      "dx":" di x" //per esempio: per f(x), cos(x)
  };
+
+ var exceptions = [["in","dx"]];
 
 // var grammar = '#JSGF V1.0 UTF-8 it; grammar my-math;'
 // grammar += "<roman_letter> = a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z ;";
