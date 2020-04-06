@@ -1,0 +1,5 @@
+#JSGF V1.0 UTF-8 it;
+
+grammar it.unito.ducci.mattia.edit;
+
+<navigazione> = avanti | indietro

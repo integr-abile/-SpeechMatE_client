@@ -3,7 +3,7 @@ var messages = {
     msg: 'Click on the microphone icon and begin speaking.',
     class: 'alert-success'},
   "speak_now": {
-    msg: 'Speak now.',
+    msg: 'Speak now. Math mode!',
     class: 'alert-success'},
   "no_speech": {
     msg: 'No speech was detected. You may need to adjust your <a href="//support.google.com/chrome/answer/2693767" target="_blank">microphone settings</a>.',
@@ -29,6 +29,9 @@ var messages = {
   "copy": {
     msg: 'Contenet copy to clipboard successfully.',
     class: 'alert-success'},
+  "modifica":{
+    msg: 'edit mode',
+    class: 'alert-success'}
 }
 
 var final_transcript = '';
@@ -36,6 +39,7 @@ var recognizing = false;
 var ignore_onend;
 var start_timestamp;
 var recognition;
+var editRecognition;
 
 $( document ).ready(function() {
   for (var i = 0; i < langs.length; i++) {
@@ -53,23 +57,35 @@ $( document ).ready(function() {
     recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    // recognition.maxAlternatives = 2;
+    editRecognition = new webkitSpeechRecognition();
+    editRecognition.continuous = true;
+    editRecognition.interimResults = true;
+    
 
+    //parsing grammatiche dei vari riconoscitori
     $.get('../res/math_grammar.txt',function(data){ //carico il mio file di grammatica
-      debugger
       var speechRecognitionList = new webkitSpeechGrammarList();
       speechRecognitionList.addFromString(data, 1);
       recognition.grammars = speechRecognitionList;
     })
-    // var speechRecognitionList = new webkitSpeechGrammarList();
-    // speechRecognitionList.addFromString(grammar, 1);
-    // recognition.grammars = speechRecognitionList;
+
+    $.get('../res/edit_grammar.txt',function(data){ //carico il mio file di grammatica
+      var speechRecognitionList = new webkitSpeechGrammarList();
+      speechRecognitionList.addFromString(data, 1);
+      editRecognition.grammars = speechRecognitionList;
+    })
     
     recognition.onstart = function() {
       recognizing = true;
       showInfo('speak_now');
       start_img.src = 'images/mic-animation.gif';
     };
+
+    editRecognition.onstart = function(){
+      recognizing = true;
+      showInfo('modifica');
+      start_img.src = 'images/mic-animation.gif';
+    }
 
     recognition.onerror = function(event) {
       if (event.error == 'no-speech') {
@@ -92,24 +108,6 @@ $( document ).ready(function() {
       }
     };
 
-    recognition.onend = function() {
-      recognizing = false;
-      if (ignore_onend) {
-        return;
-      }
-      start_img.src = 'images/mic.gif';
-      if (!final_transcript) {
-        showInfo('start');
-        return;
-      }
-      showInfo('stop');
-      if (window.getSelection) {
-        window.getSelection().removeAllRanges();
-        var range = document.createRange();
-        range.selectNode(document.getElementById('final_span'));
-        window.getSelection().addRange(range);
-      }
-    };
 
     recognition.onresult = function(event) {
       
@@ -119,12 +117,53 @@ $( document ).ready(function() {
           console.log("final");
   
           final_transcript += spellingCorrection(event.results[i][0].transcript.toLowerCase()); //0 indica l'alternativa più probabile. Decreasing confidence order
-          // debugger
-          postMathText(final_transcript);
+          
+          if(final_transcript.includes("modifica")){
+            // debugger
+            recognition.stop();
+            editRecognition.start();
+            final_transcript = '';
+            final_span.innerHTML = '';
+            interim_span.innerHTML = '';
+            return;
+          }
+
+          postMathText(final_transcript.trim());
         
           final_transcript = '';
           final_span.innerHTML = '';
           interim_span.innerHTML = '';
+        } else {
+          console.log("interim");
+          interim_transcript += event.results[i][0].transcript;
+        }
+      }                                   
+      // final_transcript = capitalize(final_transcript);
+      final_span.innerHTML = linebreak(final_transcript);
+      interim_span.innerHTML = linebreak(interim_transcript);
+    };
+
+    editRecognition.onresult = function(event) {
+      
+      var interim_transcript = '';
+      for (var i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          console.log("final");
+  
+          final_transcript = event.results[i][0].transcript.toLowerCase()
+          
+          if(final_transcript.includes("matematica")){
+            editRecognition.stop();
+            recognition.start();
+            final_transcript = '';
+            final_span.innerHTML = '';
+            interim_span.innerHTML = '';
+            return;
+          }
+
+          postEditText(final_transcript.trim());
+        
+          
         } else {
           console.log("interim");
           interim_transcript += event.results[i][0].transcript;
@@ -165,10 +204,28 @@ function linebreak(s) {
 $("#start_button").click(function () {
   if (recognizing) {
     recognition.stop();
+    editRecognition.stop();
+    recognizing = false;
+    if (ignore_onend) {
+      return;
+    }
+    start_img.src = 'images/mic.gif';
+    if (!final_transcript) {
+      showInfo('start');
+      return;
+    }
+    showInfo('stop');
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+      var range = document.createRange();
+      range.selectNode(document.getElementById('final_span'));
+      window.getSelection().addRange(range);
+    }
     return;
   }
   final_transcript = '';
   recognition.lang = select_dialect.value;
+  editRecognition.lang = select_dialect.value;
   recognition.start();
   ignore_onend = false;
   final_span.innerHTML = '';
@@ -204,6 +261,16 @@ function postMathText(txt){
   xhttp.send(JSON.stringify({"text":txt}));
 }
 
+function postEditText(txt){
+  var xhttp = new XMLHttpRequest();
+  var addr = "http://"+env.HOST_IP+":5000/editText";
+  xhttp.open("POST",addr,true);
+  xhttp.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+  xhttp.send(JSON.stringify({"text":txt}));
+}
+
+
+
 function spellingCorrection(text){
   if(text!==""){
     var split = text.split(" ");
@@ -215,11 +282,6 @@ function spellingCorrection(text){
         split[i] = problematic_letters[split[i]];
     }
     return split.join(' ');
-
-    // for(var i=0;i<split.length;i++)
-    //   if(split[i] !== "" && problematic_letters[split[i]] !== undefined)
-    //     split[i] = problematic_letters[split[i]];
-    // return split.join(' ');
   }
   return "";
 }
@@ -229,7 +291,7 @@ function checkExceptionsInText(splittedTextArray){
 
   //init
   var structuredArrayText = [];
-  debugger
+  // debugger
   for(var i=0;i<splittedTextArray.length;i++)
     structuredArrayText.push({protected:false,token:splittedTextArray[i]});
   

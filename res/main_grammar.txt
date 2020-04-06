@@ -1,0 +1,5 @@
+#JSGF V1.0 UTF-8 it;
+
+grammar it.unito.ducci.mattia.main;
+
+<triggers> = matematica | modifica;
