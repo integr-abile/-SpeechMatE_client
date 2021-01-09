@@ -74,7 +74,8 @@ var langs =
      "ics":"x",
      "ha":"a",
      "the":"de", //per integrali
-     "dx":" di x" //per esempio: per f(x), cos(x)
+     "dx":" di x", //per esempio: per f(x), cos(x)
+     "*":"per"
  };
 
  var exceptions = [["in","dx"]];
